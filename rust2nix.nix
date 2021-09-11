@@ -136,11 +136,17 @@ let
             envVars
           )
         (builtins.filter (p: p.links != null) builtDeps'));
+      src'' = skeletonCargoPkg skeletonCargoToml skeletonCargoLock src;
+      src''' = if isTopLevel then addCargoConfig cargoConfig' src'' else src'';
       depsLink = symlinkJoinPassViaFile {
         name = "${name}-${version}-deps-link";
         paths = builtins.map (p: "${p}/out") walkedDeps;
       };
       depFlags = [
+        # Remove runtime dependency on crate sources
+        "--remap-path-prefix"
+        "${src'''}=/source"
+      ] ++ [
         "-L"
         "dependency=${depsLink}"
       ] ++ (lib.optionals (!isTopLevel) [
@@ -250,12 +256,11 @@ let
         ])
       ];
       flags' = builtins.concatStringsSep " " flags;
-      src'' = skeletonCargoPkg skeletonCargoToml skeletonCargoLock src;
     in {
       pkg = pkgs.stdenv.mkDerivation (recursiveMerge [
         {
           inherit name version;
-          src = if isTopLevel then addCargoConfig cargoConfig' src'' else src'';
+          src = src''';
           nativeBuildInputs = [ cargo rustcWrapper pkgs.libiconv ];
           #buildInputs = [ pkgs.libiconv ];
           buildInputs = map (p: p.pkg) builtDeps';

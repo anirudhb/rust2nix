@@ -170,7 +170,7 @@ let
       depFlags' = builtins.concatStringsSep " " depFlags;
       rustcWrapper = pkgs.writeScriptBin "rustc" ''
           #!${pkgs.stdenv.shell}
-          exec ${rustc}/bin/rustc ${depFlags'} "''${args[@]}"
+          exec ${rustc}/bin/rustc ${depFlags'} $@
         '';
       origCargoTOML = builtins.fromTOML (builtins.readFile "${src}/Cargo.toml");
       package = origCargoTOML.package;

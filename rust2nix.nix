@@ -4,6 +4,7 @@ let
   args = builtins.removeAttrs args_ [ "cargo" "rustc" "pname" "src" ];
   lib = pkgs.lib;
   overrides = pkgs.callPackage ./overrides.nix {};
+  mkHostTriple = import ./lib/host-triple.nix {};
   #fenix = import (fetchTarball "https://github.com/nix-community/fenix/archive/main.tar.gz") {};
 
   #pname = "cargo_nixify";
@@ -87,11 +88,12 @@ let
     let
       args = builtins.removeAttrs args_ [ "name" "version" "src" "vendoredDeps" "builtDeps" "features" "isTopLevel" "NIX_LDFLAGS" ];
       override = overrides.${name} or {};
+      hostTriple = mkHostTriple pkgs.stdenv.hostPlatform;
       cargoConfig = mkCargoConfig vendoredDeps;
       cargoConfig' =
           # FIXME: translate nix target to triple
           pkgs.writeText "cargo-config" ''
-            [target.x86_64-apple-darwin]
+            [target.${hostTriple}]
             linker = "${pkgs.stdenv.cc}/bin/ld"
           '';
       depsBlacklist = [

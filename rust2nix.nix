@@ -169,7 +169,8 @@ let
         #(builtins.filter (d: !(builtins.elem (lib.getName d.value.pkg) depsBlacklist)) builtDeps)));
       depFlags' = builtins.concatStringsSep " " depFlags;
       rustcWrapper = pkgs.writeScriptBin "rustc" ''
-          ${rustc}/bin/rustc ${depFlags'} $@
+          #!${pkgs.stdenv.shell}
+          exec ${rustc}/bin/rustc ${depFlags'} "''${args[@]}"
         '';
       origCargoTOML = builtins.fromTOML (builtins.readFile "${src}/Cargo.toml");
       package = origCargoTOML.package;

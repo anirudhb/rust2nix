@@ -22,4 +22,4 @@ else {
   "x86_64-cygwin"     = "x86_64-pc-windows-${abi}";
   "x86_64-freebsd"    = "x86_64-unknown-freebsd";
   "wasm32-emscripten" = "wasm32-unknown-emscripten";
-}.${platform.system} or platform.config
+}.${platform.system or ""} or platform.config

@@ -8,7 +8,7 @@
       openssl.dev
     ];
     propagatedBuildInputs = with pkgs; [
-      openssl.lib
+      openssl.out
     ];
   };
   #openssl = {

@@ -268,12 +268,14 @@ let
           #buildInputs = [ pkgs.libiconv ];
           buildInputs = map (p: p.pkg) builtDeps';
           outputs = if package ? links then [ "out" "buildOutput" ] else [ "out" ];
-          installPhase = ''
+          buildPhase = ''
             mkdir -p $out/target
             mkdir -p $out/out
             cd $src
             export RUSTC="${rustcWrapper}/bin/rustc"
             ${cargo}/bin/cargo build ${flags'}
+          '';
+          installPhase = ''
             LIB="$(find $out/out -type f)"
             LIBEXT="''${LIB##*.}"
             LIB2="''${LIB%%.*}"

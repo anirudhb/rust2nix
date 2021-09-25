@@ -4,7 +4,7 @@ let
   args = builtins.removeAttrs args_ [ "cargo" "rustc" "pname" "src" ];
   lib = pkgs.lib;
   overrides = pkgs.callPackage ./overrides.nix {};
-  mkHostTriple = import ./lib/host-triple.nix {};
+  mkHostTriple = import ./lib/host-triple.nix;
   #fenix = import (fetchTarball "https://github.com/nix-community/fenix/archive/main.tar.gz") {};
 
   #pname = "cargo_nixify";
